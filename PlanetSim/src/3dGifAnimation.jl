@@ -47,7 +47,7 @@ function run()
         frame(anim)
     end
 
-    gif(anim, "planetary_orbits_1.gif", fps=15)
+    gif(anim, "animations/planetary_orbits_1.gif", fps=15)
     display(anim)
 end
 
