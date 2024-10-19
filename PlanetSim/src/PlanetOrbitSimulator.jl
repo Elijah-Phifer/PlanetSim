@@ -3,7 +3,7 @@ module PlanetOrbitSimulator
 using Plots, OrdinaryDiffEq, ModelingToolkit
 gr()
 
-export Planet, set_Simulation, number_of_planets ,add_planet!, run_simulation!
+export Planet, set_Simulation, number_of_planets ,add_planet!, run_simulation!, run_sim!
 
 struct Planet
     name::String
@@ -69,7 +69,7 @@ function list_masses(planets::Vector{Planet})
     return masses
 end
 
-function calculate_sim(sim::Simulation, planets::Vector{Planet}, G::Float64)
+function calculate_simu(sim::Simulation, planets::Vector{Planet}, G::Float64)
     #G = 6.67430e-11  # Gravitational constant
     vel = list_vels(planets)
     pos = list_pos(planets)
@@ -97,22 +97,44 @@ function calculate_sim(sim::Simulation, planets::Vector{Planet}, G::Float64)
     return sol, u
 end
 
+function calculate_sim(sim::Simulation, planets::Vector{Planet}, G::Float64)
+    vel = list_vels(planets)
+    pos = list_pos(planets)
+    M = list_masses(planets)
+    tspan = (0.0, sim.t_end)
+    ∑ = sum
+    N = length(planets)
+    @parameters t
+    @variables u(..)[1:3, 1:N]
+    D = Differential(t)
+    potential = -G *
+                ∑(
+        i -> ∑(j -> (M[i] * M[j]) / √(∑(k -> (u[k, i] - u[k, j])^2, 1:3)), 1:(i - 1)),
+        2:N)
+
+    eqs = vec(@. D(D(u))) .~ .-ModelingToolkit.gradient(potential, vec(u)) ./
+    repeat(M, inner = 3)
+    @named sys = ODESystem(eqs, t)
+    ss = structural_simplify(sys)
+    prob = ODEProblem(ss, [vec(u .=> pos); vec(D.(u) .=> vel)], tspan)
+    sol = solve(prob, Tsit5(), reltol=1e-8, abstol=1e-8);
+    
+    return sol
+end
+
 # function update_planet!(planet::Planet, acceleration::Vector{Float64}, dt::Float64)
 #     planet.velocity += acceleration * dt
 #     planet.position += planet.velocity * dt
 # end
 
 function run_simulation!(sim::Simulation)
-    # t = 0.0
-    # while t < sim.t_end
-    #     for planet in sim.planets
-    #         a = calculate_acceleration(planet, sim.planets)
-    #         update_planet!(planet, a, sim.dt)
-    #     end
-    #     t += sim.dt
-    # end
-    sol, u = calculate_sim(sim, sim.planets, sim.G)
+    sol, u = calculate_simu(sim, sim.planets, sim.G)
     return sol, u
+end
+
+function run_sim!(sim::Simulation)
+    sol = calculate_sim(sim, sim.planets, sim.G)
+    return sol
 end
 
 end # module
