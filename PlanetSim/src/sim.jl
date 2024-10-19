@@ -4,10 +4,11 @@ include("PlanetOrbitSimulator.jl")
 
 using .PlanetOrbitSimulator
 using Plots
+gr()
 
 export run
 # Create a new simulation
-simu = set_Simulation(1000.0, 2.95912208286e-4)  # t_end, G
+simu = set_Simulation(400_000.0, 2.95912208286e-4)  # t_end, G
 
 # Add planets
 add_planet!(simu, Planet("Sun", 1.00000597682, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]))
@@ -28,7 +29,9 @@ function run()
     end
     plot!(plt; xlab = "x", ylab = "y", zlab = "z", title = "Outer solar system")
 
-    display(plt)
+    savefig(plt, "outer_solar_system.png")
+    
+    #display(plt)
 
 
 end
