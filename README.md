@@ -2,7 +2,13 @@
 # User Manual for the Planet Orbit Simulator
 
 
-This user manual will guide you through setting up and running the Planet Orbit Simulator using the provided files. We’ll cover the necessary package installation, usage, and examples from `sim.jl` and `3dGifAnimation.jl`.  ---  ## 1. Prerequisites and Setup  Before running the simulator, you need to have Julia installed. Follow these steps to install Julia and set up your environment.  ### Step 1: Install Julia - Download Julia from [https://julialang.org/downloads](https://julialang.org/downloads). - Follow the installation instructions for your operating system.  ### Step 2: Install Required Packages Open your terminal or Julia REPL and enter the following commands to install the necessary packages: 
+This user manual will guide you through setting up and running the Planet Orbit Simulator using the provided files. We’ll cover the necessary package installation, usage, and examples from `sim.jl` and `3dGifAnimation.jl`.  ---  
+
+## 1. Prerequisites and Setup  Before running the simulator, you need to have Julia installed. Follow these steps to install Julia and set up your environment.  
+
+### Step 1: Install Julia - Download Julia from [https://julialang.org/downloads](https://julialang.org/downloads). - Follow the installation instructions for your operating system.  
+
+### Step 2: Install Required Packages Open your terminal or Julia REPL and enter the following commands to install the necessary packages: 
 
 ```
 julia using Pkg  
