@@ -82,8 +82,11 @@ A new simulation is created:
 Several planets are added to the simulation:
 
 
-`add_planet!(simu, Planet("Sun", 1.00000597682, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0])) 
-add_planet!(simu, Planet("Jupiter", 0.000954786, [-3.502, -3.816, -1.550], [0.0056, -0.0041, -0.0019]))`
+```
+add_planet!(simu, Planet("Sun", 1.00000597682, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0])) 
+
+add_planet!(simu, Planet("Jupiter", 0.000954786, [-3.502, -3.816, -1.550], [0.0056, -0.0041, -0.0019]))
+```
 
 The simulation is run:
 
