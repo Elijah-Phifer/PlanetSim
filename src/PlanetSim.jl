@@ -24,6 +24,6 @@ export add_planet!, remove_planet!, number_of_planets, list_vels, list_pos, list
 
 export run_algorithm
 
-export Plot_Static, Animate3D_interactive
+export Plot_Static, Animate3D_interactive, Animate3D_GIF, save_gif
 
 end

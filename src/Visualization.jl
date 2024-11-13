@@ -7,7 +7,7 @@ using GeometryBasics
 
 gr()
 
-export Plot_Static, Animate3D_interactive
+export Plot_Static, Animate3D_interactive, Animate3D_GIF, save_gif
 
 function Plot_Static(df::DataFrame)
     # Visualization code here
@@ -23,11 +23,6 @@ function Plot_Static(df::DataFrame)
         Plots.plot!(plt, planet_data.x, planet_data.y, planet_data.z, label=planet_name)
     end
 
-    # Save the plot to a file
-    #savefig(plt, "outer_solar_system.png")
-    
-    # Display the plot
-    # display(plt)
     return plt
 end
 
@@ -43,24 +38,6 @@ function Animate3D_interactive(df::DataFrame)
     ax = Axis3(fig[1, 1], aspect = :data)
     hidedecorations!(ax)
     hidespines!(ax)
-
-    # Define visual properties
-    # planet_colors = Dict(
-    #     "Sun" => :yellow,
-    #     "Jupiter" => :orange,
-    #     "Saturn" => :gold,
-    #     "Uranus" => :lightblue,
-    #     "Neptune" => :blue,
-    #     "Pluto" => :gray
-    # )
-    # planet_sizes = Dict(
-    #     "Sun" => 0.5,
-    #     "Jupiter" => 0.3,
-    #     "Saturn" => 0.25,
-    #     "Uranus" => 0.2,
-    #     "Neptune" => 0.2,
-    #     "Pluto" => 0.1
-    # )
     
     # Define color palette and size scaling factors
     base_colors = Dict("Sun" => :yellow, "Jupiter" => :orange, "Saturn" => :gold, "Earth" => :green,
@@ -101,7 +78,7 @@ function Animate3D_interactive(df::DataFrame)
         frame_data = filter(row -> row.time == time_step, df)
         for row in eachrow(frame_data)
             new_pos = Point3f0(row.x, row.y, row.z)
-            planet_meshes[row.planet][1] = Sphere(new_pos, Float32(planet_sizes[row.planet]))
+            planet_meshes[row.planet][1] = Sphere(new_pos, (Float32(planet_sizes[row.planet])) )
         end
     end
 
@@ -133,5 +110,39 @@ function Animate3D_interactive(df::DataFrame)
     return fig
 
 end
+
+function Animate3D_GIF(df::DataFrame)
+    # Ensure time column is ordered to maintain animation sequence
+    unique_times = sort(unique(df.time))
+    
+    # Set up animation
+    anim = @animate for t in unique_times
+        # Filter data for the current time step
+        df_time = filter(row -> row.time == t, df)
+        
+        # 3D scatter plot for this time step
+        Plots.scatter(df_time.x, df_time.y, df_time.z, 
+                group = df_time.planet, 
+                markersize = 5,
+                label = df_time.planet,
+                xlims = (-30, 30), 
+                ylims = (-30, 30), 
+                zlims = (-30, 30),
+                xlabel = "X", ylabel = "Y", zlabel = "Z", 
+                title = "Planetary Orbits at t = $(round(t, digits=2))")
+    end
+    
+    # Save animation as a GIF
+    #gif(anim, filename, fps = 10)
+
+    return anim
+end
+
+function save_gif(plt, filename)
+    # Display the GIF in the notebook
+    #display("image/gif", read(filename))
+    gif(plt, filename, fps = 15)
+end
+
 
 end
