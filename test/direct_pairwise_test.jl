@@ -2,9 +2,12 @@ using PlanetSim
 
 # Create a simlation environment
 
-sim = initialize_simulation(100.0, 2.95912208286e-4)
 
-Sun = Planet("Sun", 1.00000597682, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
+sim = initialize_simulation(500.0, 2.95912208286e-4)
+sun_mass = 1.00000597682
+
+
+Sun = Planet("Sun", sun_mass, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
 Mercury = Planet("Mercury", 0.0000001653, [0.3871, 0.0, 0.0], [0.0, 0.0175, 0.0])
 Venus = Planet("Venus", 0.0000024478383, [0.7233, 0.0, 0.0], [0.0, 0.0130, 0.0])
 Earth = Planet("Earth", 0.000003003, [0.999723, -0.002897, 0.0], [0.000503, 0.017201, 0.0])
@@ -33,17 +36,16 @@ add_planet!(sim, Mercury)
 # Run the simulation
 data = run_algorithm(:direct_pairwise, sim)
 
-# Display the result
-plt1 = Plot_Static(data)
-
-display(plt1)
-
 ### Uncomment the following lines to try different visualization methods #####
+# Display the result
+#plt1 = Plot_Static(data)
+#display(plt1)
 
-# plt2 = Animate3D_interactive(data)
+plt2 = Static_interactive(data, sim,sun_mass)
+display(plt2)
 
-# display(plt2)
+#plt3 = Animate3D_interactive(data)
+#display(plt3)
 
-# plt3 = Animate3D_GIF(data)
-
-# save_gif(plt3, "test/graphs/planetary_orbits.gif")
+# plt4 = Animate3D_GIF(data)
+# save_gif(plt4, "test/graphs/planetary_orbits.gif")

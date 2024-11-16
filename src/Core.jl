@@ -2,12 +2,12 @@ module Core
 
 export Simulation_env, Planet, Region3D, OctreeNode3D
 
+
 # Structure to represent a 3D region in space
 struct Region3D
     center::Vector{Float64}
     size::Float64
 end
-
 
 mutable struct Planet
     name::String
@@ -17,6 +17,7 @@ mutable struct Planet
     force::Vector{Float64}
 
     Planet(name, mass, position, velocity) = new(name, mass, copy(position), copy(velocity), zeros(3))
+    
 end
 
 mutable struct OctreeNode3D
@@ -37,8 +38,6 @@ struct Simulation_env
     G::Float64
     t_end::Float64
 end
-
-
 
 
 end
