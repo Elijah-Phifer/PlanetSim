@@ -2,7 +2,7 @@ module PlanetManager
 
 using ..Core
 
-export add_planet!, remove_planet!, number_of_planets, list_vels, list_pos, list_masses
+export add_planet!, remove_planet!, number_of_planets, list_vels, list_pos, list_masses, update_sun_mass!
 
 
 function add_planet!(sim::Simulation_env, planet::Planet)
@@ -53,6 +53,15 @@ function list_masses(planets::Vector{Planet})
     end
     
     return masses
+end
+
+function update_sun_mass!(sim::Simulation_env, new_mass::Float64)
+    for planet in sim.planets
+        if planet.name == "Sun"
+            planet.mass = new_mass  # Update the mass directly
+            break
+        end
+    end
 end
 
 end
