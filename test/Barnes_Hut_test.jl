@@ -1,9 +1,10 @@
+# Example usage (similar to direct_pairwise_test.jl):
 using PlanetSim
 
-# Create a simlation environment
+# Create a simulation environment
+sim = initialize_simulation(100_000.0, 2.95912208286e-4)
 
-sim = initialize_simulation(100.0, 2.95912208286e-4)
-
+# Add planets (same as in direct_pairwise_test.jl)
 Sun = Planet("Sun", 1.00000597682, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
 Mercury = Planet("Mercury", 0.0000001653, [0.3871, 0.0, 0.0], [0.0, 0.0175, 0.0])
 Venus = Planet("Venus", 0.0000024478383, [0.7233, 0.0, 0.0], [0.0, 0.0130, 0.0])
@@ -24,26 +25,12 @@ add_planet!(sim, Neptune)
 add_planet!(sim, Pluto)
 add_planet!(sim, Earth)
 add_planet!(sim, Mars)
-add_planet!(sim, Venus)
-add_planet!(sim, Mercury)
+#add_planet!(sim, Venus)
+#add_planet!(sim, Mercury)
 
-# remove_planet!(sim, Pluto)
-# remove_planet!(sim, Earth)
-
-# Run the simulation
-data = run_algorithm(:direct_pairwise, sim)
+# Run the simulation using Barnes-Hut
+data = run_algorithm(:Barnes_Hut, sim)
 
 # Display the result
 plt1 = Plot_Static(data)
-
 display(plt1)
-
-### Uncomment the following lines to try different visualization methods #####
-
-# plt2 = Animate3D_interactive(data)
-
-# display(plt2)
-
-# plt3 = Animate3D_GIF(data)
-
-# save_gif(plt3, "test/graphs/planetary_orbits.gif")

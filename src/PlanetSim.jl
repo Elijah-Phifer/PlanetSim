@@ -16,7 +16,7 @@ using .Visualization
 
 # Export essential functions and struct
 
-export Planet, Simulation_env
+export Planet, Simulation_env, Region3D, OctreeNode3D
 
 export initialize_simulation
 
