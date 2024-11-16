@@ -7,7 +7,7 @@ using GeometryBasics
 
 gr()
 
-export Plot_Static, Animate3D_interactive, Animate3D_GIF, save_gif
+export Plot_Static, Static_interactive, Animate3D_interactive, Animate3D_GIF, save_gif
 
 function Plot_Static(df::DataFrame)
     # Visualization code here
@@ -24,6 +24,81 @@ function Plot_Static(df::DataFrame)
     end
 
     return plt
+end
+
+function Static_interactive(df::DataFrame, sim::Simulation_env, sun_mass::Float64)
+    grouped_planets = groupby(df, :planet)
+
+    fig = Figure(resolution=(1200, 800))
+    ax = Axis3(fig[1, 1], xlabel="x", ylabel="y", zlabel="z", aspect=:data, width=600, height=400)
+
+    # Store the plot references in a simple array
+    lines_plotted = []
+
+    for planet_data in grouped_planets
+        planet_name = unique(planet_data.planet)[1]
+        line = lines!(ax, planet_data.x, planet_data.y, planet_data.z, label=planet_name)
+        push!(lines_plotted, line)  # Store the reference to the line object
+    end
+
+    ax.title = "Planetary Orbits"
+
+    # Create Sun mass slider
+    slider = Slider(fig[2, 1], range=0.5:0.1:5.0, startvalue=sun_mass)
+    
+    # Display the current slider value
+    Label(fig[2, 2], text=lift(slider.value) do v
+        "Sun Mass: $v"
+    end)
+
+    # Button to re-run the simulation
+    button = Button(fig[3, 1], label="Simulate")
+
+    # Flag to prevent redundant simulation runs
+    running_simulation = false
+
+    on(button.clicks) do _
+        if running_simulation
+            println("Simulation already running.")
+            return
+        end
+
+        # Set the flag to indicate that a simulation is running
+        running_simulation = true
+
+        # Extract the value from the Observable slider
+        sun_mass_value = slider.value[] 
+        println("Button pressed. Sun Mass from slider: $sun_mass_value")
+
+        # Update the sun's mass in the simulation
+        update_sun_mass!(sim, sun_mass_value) 
+
+        # Rerun the simulation
+        data = run_algorithm(:direct_pairwise, sim)
+        grouped_planets = groupby(data, :planet)
+
+        # Hide old lines before plotting new ones
+        for line in lines_plotted
+            line.visible = false  
+        end
+
+        # Clear the stored lines list
+        empty!(lines_plotted)
+
+        # Plot new orbits
+        for planet_data in grouped_planets
+            planet_name = unique(planet_data.planet)[1]
+            line = lines!(ax, planet_data.x, planet_data.y, planet_data.z, label=planet_name)
+            push!(lines_plotted, line) 
+        end
+
+        println("Simulation completed.")
+        
+        # Reset the flag after the simulation is done
+        running_simulation = false
+    end
+
+    return fig
 end
 
 function Animate3D_interactive(df::DataFrame)
