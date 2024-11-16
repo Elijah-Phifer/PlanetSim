@@ -2,7 +2,7 @@ module Core
 
 export Simulation_env, Planet
 
-struct Planet
+mutable struct Planet
     name::String
     mass::Float64
     position::Vector{Float64}
