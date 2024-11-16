@@ -4,6 +4,9 @@ using Plots
 using DataFrames
 using GLMakie
 using GeometryBasics
+using ..Core: Simulation_env  
+using ..PlanetManager
+using ..Algorithms: run_algorithm
 
 gr()
 
