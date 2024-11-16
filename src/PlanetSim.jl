@@ -20,10 +20,10 @@ export Planet, Simulation_env
 
 export initialize_simulation
 
-export add_planet!, remove_planet!, number_of_planets, list_vels, list_pos, list_masses
+export add_planet!, remove_planet!, number_of_planets, list_vels, list_pos, list_masses, update_sun_mass!
 
 export run_algorithm
 
-export Plot_Static, Animate3D_interactive, Animate3D_GIF, save_gif
+export Plot_Static, Static_interactive, Animate3D_interactive, Animate3D_GIF, save_gif
 
 end
