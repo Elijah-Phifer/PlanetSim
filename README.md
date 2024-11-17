@@ -87,7 +87,7 @@ remove_planet!(sim, Earth)
 
 ### Step 5: Run the Simulation
 
-Run the simulation with `run_algorithm(algorithm, sim)`, where `algorithm` specifies the calculation method. For example, use `:direct_pairwise` for a basic gravitational pairwise force calculation.
+Run the simulation with `run_algorithm(algorithm, sim)`, where `algorithm` specifies the calculation method. For example, use `:direct_pairwise` for a basic gravitational pairwise force calculation. Alternatively `:Barnes_Hut` can be used. The differences are explained further along. 
 
 #### Example
 ```julia
@@ -106,14 +106,22 @@ The `Plot_Static(data)` function creates a static 3D plot of the planetary orbit
 plt1 = Plot_Static(data)
 display(plt1)
 ```
+#### 2. Static interactive
 
-#### 2. Interactive 3D Animation
+The `Static_interactive(:direct_pairwise, data, sim, sun_mass)` function produces a simple gui that allows the user to change the mass of the sun.
+
+```julia
+plt2 = Static_interactive(:direct_pairwise, data, sim,sun_mass)
+display(plt2)
+```
+
+#### 3. Interactive 3D Animation
 
 The `Animate3D_interactive(data)` function produces an interactive 3D animation, allowing you to navigate and explore planetary orbits.
 
 ```julia
-plt2 = Animate3D_interactive(data)
-display(plt2)
+plt3 = Animate3D_interactive(data)
+display(plt3)
 ```
 
 #### 3. Save as Animated GIF
@@ -127,8 +135,11 @@ save_gif(plt3, "path/to/planetary_orbits.gif")
 
 ### Full Example Code
 Here’s a complete example to simulate the solar system:
+*Note* The user can choose between the Barnes_Hut_test.jl and direct_pairwise_test.jl. The only difference being that Barnes_Hut_test is less accurate but compensates with faster run times. 
+
 
 ```julia
+#direct_pairwise_test.jl
 using PlanetSim
 
 # Initialize the simulation
@@ -169,11 +180,14 @@ data = run_algorithm(:direct_pairwise, sim)
 plt1 = Plot_Static(data)
 display(plt1)
 
-plt2 = Animate3D_interactive(data)
+plt2 = Static_interactive(:direct_pairwise, data, sim,sun_mass)
 display(plt2)
 
-plt3 = Animate3D_GIF(data)
-save_gif(plt3, "path/to/planetary_orbits.gif")
+plt3 = Animate3D_interactive(data)
+display(plt3)
+
+plt4 = Animate3D_GIF(data)
+save_gif(plt4, "test/graphs/planetary_orbits.gif")
 ```
 
 ### Function Reference
@@ -184,6 +198,8 @@ save_gif(plt3, "path/to/planetary_orbits.gif")
 - **`remove_planet!(sim, planet)`**: Removes a planet from the simulation.
 - **`run_algorithm(algorithm, sim)`**: Runs the specified simulation algorithm.
 - **`Plot_Static(data)`**: Creates a static 3D plot.
+- **`Static_interactive(:direct_pairwise, data, sim,sun_mass)`**: Creates a gui that allows for the manipulation of the sun's mass. :direct_pairwise version
+- **`Static_interactive(:Barnes_Hut, data, sim,sun_mass)`**: :Barnes_Hut version
 - **`Animate3D_interactive(data)`**: Generates an interactive 3D animation.
 - **`Animate3D_GIF(data)`**: Creates an animated GIF of the planetary orbits.
 
