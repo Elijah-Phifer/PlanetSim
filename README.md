@@ -108,7 +108,7 @@ display(plt1)
 ```
 #### 2. Static interactive
 
-The `Static_interactive(:direct_pairwise, data, sim, sun_mass)` function produces a simple gui that allows the user to change the mass of the sun.
+The `Static_interactive(:direct_pairwise, data, sim, sun_mass)` function produces a simple gui that allows the user to change the mass of the sun. Simply move the slider to the desired value and press the `simulate` button to rerun the simulation
 
 ```julia
 plt2 = Static_interactive(:direct_pairwise, data, sim,sun_mass)
