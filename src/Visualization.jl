@@ -29,7 +29,7 @@ function Plot_Static(df::DataFrame)
     return plt
 end
 
-function Static_interactive(df::DataFrame, sim::Simulation_env, sun_mass::Float64)
+function Static_interactive(algorithm::Symbol, df::DataFrame, sim::Simulation_env, sun_mass::Float64)
     grouped_planets = groupby(df, :planet)
 
     fig = Figure(resolution=(1200, 800))
@@ -77,7 +77,7 @@ function Static_interactive(df::DataFrame, sim::Simulation_env, sun_mass::Float6
         update_sun_mass!(sim, sun_mass_value) 
 
         # Rerun the simulation
-        data = run_algorithm(:direct_pairwise, sim)
+        data = run_algorithm(algorithm, sim)
         grouped_planets = groupby(data, :planet)
 
         # Hide old lines before plotting new ones

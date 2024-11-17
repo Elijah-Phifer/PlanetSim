@@ -41,7 +41,7 @@ data = run_algorithm(:direct_pairwise, sim)
 #plt1 = Plot_Static(data)
 #display(plt1)
 
-plt2 = Static_interactive(data, sim,sun_mass)
+plt2 = Static_interactive(:direct_pairwise, data, sim,sun_mass)
 display(plt2)
 
 #plt3 = Animate3D_interactive(data)

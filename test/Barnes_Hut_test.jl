@@ -2,7 +2,7 @@
 using PlanetSim
 
 # Create a simulation environment
-sim = initialize_simulation(100_000.0, 2.95912208286e-4)
+sim = initialize_simulation(10000.0, 2.95912208286e-4)
 
 # Add planets (same as in direct_pairwise_test.jl)
 Sun = Planet("Sun", 1.00000597682, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
@@ -30,6 +30,12 @@ add_planet!(sim, Mars)
 
 # Run the simulation using Barnes-Hut
 data = run_algorithm(:Barnes_Hut, sim)
+
+sun_mass = Sun.mass
+
+plt2 = Static_interactive(:Barnes_Hut, data, sim,sun_mass)
+display(plt2)
+
 
 # Display the result
 plt1 = Plot_Static(data)
