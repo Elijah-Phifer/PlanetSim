@@ -15,6 +15,8 @@ const θ = 0.7         # threshold for Barnes-Hut approximation
 function run_algorithm(algorithm::Symbol, sim::Simulation_env)# planets::Vector{Planet}, g::Float64)
     if algorithm == :direct_pairwise
         return direct_pairwise_simulation(sim)
+    elseif algorithm == :d_p_wo_ham
+        return direct_pairwise_wo_ham(sim)
     elseif algorithm == :Barnes_Hut
         return Barnes_Hut(sim)
     else
@@ -36,7 +38,7 @@ function direct_pairwise_simulation(sim::Simulation_env)
     ∑ = sum
     N = length(planets)
     @independent_variables t
-    @variables t u(t)[1:3, 1:N]
+    @variables u(t)[1:3, 1:N]
     u = collect(u)
     D = Differential(t)
     potential = -G *
@@ -295,41 +297,6 @@ function compute_force(node::OctreeNode3D, body::Planet, G::Float64, θ::Float64
     
     # Check if node is far enough for approximation
 
-
-    # This stuff works weird, needs more work!!! ###########
-
-    # # Region size / distance ratio
-    # size_to_distance = node.region.size / r_mag
-
-
-    # # Smooth transition for force approximation
-    # ε = 0.1  # Transition width, adjust as needed
-    # if size_to_distance < θ - ε
-    #     # Fully approximate using center of mass
-    #     return G * node.total_mass * body.mass * r / (r_mag^3)
-    # elseif size_to_distance > θ + ε
-    #     # Fully resolve using children nodes
-    #     force = zeros(3)
-    #     for child in node.children
-    #         if child !== nothing
-    #             force .+= compute_force(child, body, G, θ, depth + 1)
-    #         end
-    #     end
-    #     return force
-    # else
-    #     # Blend the two approaches
-    #     approx_force = G * node.total_mass * body.mass * r / (r_mag^3)
-    #     direct_force = zeros(3)
-    #     for child in node.children
-    #         if child !== nothing
-    #             direct_force .+= compute_force(child, body, G, θ, depth + 1)
-    #         end
-    #     end
-    #     # Weighted blend
-    #     α = (size_to_distance - (θ - ε)) / (2 * ε)
-    #     return α * direct_force + (1 - α) * approx_force
-    # end
-
     #First try this works!!!!################
     if node.body !== nothing || (node.region.size / r_mag < θ)
         # Use this node's COM as an approximation
@@ -353,6 +320,62 @@ function subdivide!(node::OctreeNode3D)
         region = get_child_region(node.region, i)
         node.children[i] = OctreeNode3D(region)
     end
+end
+
+function calculate_force(body1::Planet, body2::Planet, G::Float64=2.95912208286e-4)
+    """Calculate the gravitational force exerted on body1 by body2."""
+    r_vector = body2.position - body1.position
+    r_magnitude = norm(r_vector)
+    if r_magnitude == 0.0
+        return zeros(3)  # Avoid division by zero
+    end
+    r_unit = r_vector / r_magnitude
+    force_magnitude = G * body1.mass * body2.mass / r_magnitude^2
+    return force_magnitude .* r_unit
+end
+
+function update_positions_and_velocities!(bodies::Vector{Planet}, dt::Float64)
+    """Update the positions and velocities of all bodies."""
+    forces = [zeros(3) for _ in bodies]
+
+    # Compute pairwise gravitational forces
+    for i in eachindex(bodies)
+        for j in eachindex(bodies)
+            if i != j
+                forces[i] += calculate_force(bodies[i], bodies[j])
+            end
+        end
+    end
+
+    # Update velocities and positions
+    for i in eachindex(bodies)
+        acceleration = forces[i] / bodies[i].mass
+        bodies[i].velocity += acceleration .* dt
+        bodies[i].position += bodies[i].velocity .* dt
+    end
+end
+
+function direct_pairwise_wo_ham(sim::Simulation_env)
+    """Run the N-body simulation for a given number of steps and save data for plotting."""
+
+    dt = 0.1
+
+    steps = sim.t_end
+
+    bodies = sim.planets
+    data = DataFrame(time=Int[], planet=Int[], x=Float64[], y=Float64[], z=Float64[])
+
+    for step in 1:steps
+        # Record positions at each step
+        for (i, body) in enumerate(bodies)
+            push!(data, (step, i, body.position[1], body.position[2], body.position[3]))
+        end
+
+        # Update positions and velocities
+        update_positions_and_velocities!(bodies, dt)
+    end
+
+    return data
 end
 
 end
