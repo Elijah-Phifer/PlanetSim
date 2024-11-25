@@ -1,12 +1,12 @@
+# Example usage (similar to direct_pairwise_test.jl):
 using PlanetSim
 
-# Create a simlation environment
+# Create a simulation environment
+sim = initialize_simulation(100000.0, 2.95912208286e-4)
 
-
-sim = initialize_simulation(10_000.0, 2.95912208286e-4)
+# Add planets (same as in direct_pairwise_test.jl)
+# Existing planets
 sun_mass = 1.00000597682
-
-
 Sun = Planet("Sun", sun_mass, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
 Mercury = Planet("Mercury", 0.0000001653, [0.3871, 0.0, 0.0], [0.0, 0.0175, 0.0])
 Venus = Planet("Venus", 0.0000024478383, [0.7233, 0.0, 0.0], [0.0, 0.0130, 0.0])
@@ -18,34 +18,31 @@ Uranus = Planet("Uranus", 0.0000437273164546, [8.310142, -16.2901086, -7.2521278
 Neptune = Planet("Neptune", 0.0000517759138449, [11.4707666, -25.7294829, -10.8169456], [0.0028893, 0.00114527, 0.00039677])
 Pluto = Planet("Pluto", 1 / 1.3e8, [-15.5387357, -25.2225594, -3.1902382], [0.00276725, -0.00170702, -0.00136504])
 
+
 # Add planets
 add_planet!(sim, Sun)
+# add_planet!(sim, Mercury)
+# add_planet!(sim, Venus)
+# add_planet!(sim, Earth)
+# add_planet!(sim, Mars)
 add_planet!(sim, Jupiter)
 # add_planet!(sim, Saturn)
 # add_planet!(sim, Uranus)
 # add_planet!(sim, Neptune)
 # add_planet!(sim, Pluto)
-# add_planet!(sim, Earth)
-# add_planet!(sim, Mars)
-# add_planet!(sim, Venus)
-# add_planet!(sim, Mercury)
 
-# remove_planet!(sim, Pluto)
-# remove_planet!(sim, Earth)
 
-# Run the simulation
-data = run_algorithm(:direct_pairwise, sim)
 
-### Uncomment the following lines to try different visualization methods #####
+# Run the simulation using Barnes-Hut
+data = run_algorithm(:d_p_wo_ham, sim)
+
+# sun_mass = Sun.mass
+
+# plt2 = Static_interactive(:Barnes_Hut, data, sim,sun_mass)
+# display(plt2)
+
+
 # Display the result
 plt1 = Plot_Static(data)
 display(plt1)
 
-# plt2 = Static_interactive(:direct_pairwise, data, sim,sun_mass)
-# display(plt2)
-
-#plt3 = Animate3D_interactive(data)
-#display(plt3)
-
-# plt4 = Animate3D_GIF(data)
-# save_gif(plt4, "test/graphs/planetary_orbits.gif")
